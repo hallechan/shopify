@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <random>
 
 using namespace std;
@@ -24,6 +25,10 @@ class Shortener {
 
     string createEntry(string shortKey, string longUrl){
         shortToLongMap[shortKey] = longUrl;
+        ofstream fileWriter;
+        fileWriter.open("keyMap.txt", ios_base::app);
+        fileWriter << shortKey << endl;
+        fileWriter << longUrl << endl;
         return shortKey;
     }
 
@@ -31,12 +36,32 @@ class Shortener {
         return shortToLongMap[shortKey];
     }
 
+    Shortener(){
+        addKeysFromFile();
+    }
+
+    void addKeysFromFile(){
+        ifstream fileReader("keyMap.txt");
+        string shortKey;
+        string longKey;
+        while (getline(fileReader, shortKey)){
+            getline(fileReader, longKey);
+                shortToLongMap[shortKey] = longKey;
+        }
+    }
+
+    
+
 };
 
 int main(){
     Shortener s = Shortener();
     string key = s.generateShortKey();
+    string betterKey = s.generateShortKey();
     cout << "KEY :" << key << endl;
+    cout << "BETTER :" << betterKey << endl;
     s.createEntry(key, "shop.ify/DUSDHUASUIND");
+    s.createEntry(betterKey, "shop.ify/BETTERKEY");
     cout << "LONG URL: " << s.getLongUrlFor(key) << endl;
+    cout << "LONG URL: " << s.getLongUrlFor(betterKey) << endl;
 }
